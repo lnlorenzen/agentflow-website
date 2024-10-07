@@ -10,6 +10,7 @@ import { Textarea } from "../../components/ui/textarea"
 import { Card, CardContent } from "../../components/ui/card"
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group"
 import { Label } from "../../components/ui/label"
+import { Analytics } from "@vercel/analytics/react"
 
 const NavItem = ({ href, children, isDarkMode, onClick }: { href: string; children: React.ReactNode; isDarkMode: boolean; onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void }) => (
   <Link 
