@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json()
+    const { name, email, bereich, message } = await request.json()
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -19,9 +19,10 @@ export async function POST(request: Request) {
       from: `"AgentFlow Integrations" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_TO,
       subject: "Neue Kontaktanfrage",
-      text: `Name: ${name}\nE-Mail: ${email}\nNachricht: ${message}`,
+      text: `Name: ${name}\nE-Mail: ${email}\nBereich: ${bereich}\nNachricht: ${message}`,
       html: `<p><strong>Name:</strong> ${name}</p>
              <p><strong>E-Mail:</strong> ${email}</p>
+             <p><strong>Bereich:</strong> ${bereich}</p>
              <p><strong>Nachricht:</strong> ${message}</p>`,
     })
 

@@ -8,9 +8,15 @@ import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Textarea } from "../../components/ui/textarea"
 import { Card, CardContent } from "../../components/ui/card"
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group"
+import { Label } from "../../components/ui/label"
 
-const NavItem = ({ href, children, isDarkMode }: { href: string; children: React.ReactNode; isDarkMode: boolean }) => (
-  <Link href={href} className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
+const NavItem = ({ href, children, isDarkMode, onClick }: { href: string; children: React.ReactNode; isDarkMode: boolean; onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void }) => (
+  <Link 
+    href={href} 
+    className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}
+    onClick={onClick}
+  >
     {children}
   </Link>
 )
@@ -191,10 +197,30 @@ export default function LandingPage() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode)
+    
+    // Prevent horizontal scrolling
+    document.body.style.overflowX = 'hidden'
+    
+    return () => {
+      document.body.style.overflowX = 'auto'
+    }
   }, [isDarkMode])
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault()
+    const section = document.getElementById(sectionId)
+    if (section) {
+      const yOffset = -80 // Adjust this value to account for any fixed headers
+      const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+    if (isMenuOpen) {
+      setIsMenuOpen(false)
+    }
+  }
+
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark bg-black text-white' : 'bg-white text-black'} relative overflow-hidden transition-colors duration-300 font-manrope`}>
+    <div className={`min-h-screen ${isDarkMode ? 'dark bg-black text-white' : 'bg-white text-black'} relative overflow-x-hidden transition-colors duration-300 font-manrope`}>
       <InteractiveNetworkGraph isDarkMode={isDarkMode} />
       
       <header className="container mx-auto py-4 relative z-10">
@@ -206,8 +232,8 @@ export default function LandingPage() {
                 : "/images/logo-light.svg"
               }
               alt="AgentFlow Logo" 
-              width={150}
-              height={40}
+              width={120}
+              height={32}
               className="mr-2"
               priority
             />
@@ -227,10 +253,9 @@ export default function LandingPage() {
             id="main-menu"
             className={`${isMenuOpen ? 'block' : 'hidden'} md:flex space-y-4 md:space-y-0 md:space-x-8 flex-col md:flex-row items-center absolute md:relative top-full left-0 right-0 bg-black md:bg-transparent p-4 md:p-0`}
           >
-            <NavItem href="#leistungen" isDarkMode={isDarkMode}>01 LEISTUNGEN</NavItem>
-            <NavItem href="#ergebnisse" isDarkMode={isDarkMode}>02 ERGEBNISSE</NavItem>
-            <NavItem href="#about" isDarkMode={isDarkMode}>03 ÜBER UNS</NavItem>
-            <NavItem href="#ressourcen" isDarkMode={isDarkMode}>04 RESSOURCEN</NavItem>
+            <NavItem href="#leistungen" isDarkMode={isDarkMode} onClick={(e) => scrollToSection(e, 'leistungen')}>01 LEISTUNGEN</NavItem>
+            <NavItem href="#about" isDarkMode={isDarkMode} onClick={(e) => scrollToSection(e, 'about')}>02 ÜBER UNS</NavItem>
+            <NavItem href="#kontakt" isDarkMode={isDarkMode} onClick={(e) => scrollToSection(e, 'kontakt')}>03 KONTAKT</NavItem>
             <Button className={`${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} rounded-full transition-colors duration-200`}>
               Termin vereinbaren
             </Button>
@@ -245,18 +270,18 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      <main className="container mx-auto py-20 relative z-10">
+      <main className="container mx-auto py-10 md:py-20 relative z-10 px-4">
         <FadeInSection>
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 leading-tight">
               KI-Optimierte & Automatisierte Geschäftsprozesse
             </h1>
-            <p className={`text-xl mb-12 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
+            <p className={`text-lg md:text-xl mb-8 md:mb-12 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>
               Wir revolutionieren Ihre Geschäftsprozesse durch KI und Automatisierung. Steigern Sie Effizienz, 
               Qualität und Kundenzufriedenheit mit unseren maßgeschneiderten Lösungen.
             </p>
             <div className="flex justify-center">
-              <Button className={`${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} text-lg px-8 py-3 rounded-full transition-colors duration-200 flex items-center`}>
+              <Button className={`${isDarkMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} text-base md:text-lg px-6 md:px-8 py-2 md:py-3 rounded-full transition-colors duration-200 flex items-center`}>
                 Kostenlose Beratung
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -343,7 +368,7 @@ export default function LandingPage() {
         </FadeInSection>
       </section>
 
-      <section className="py-20 relative z-10">
+      <section id="kontakt" className="py-20 relative z-10">
         <FadeInSection>
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-8">Kontaktieren Sie uns</h2>
@@ -370,6 +395,27 @@ export default function LandingPage() {
                     placeholder="max.mustermann@example.com"
                     className={`w-full ${isDarkMode ? '!bg-gray-800 !text-white' : '!bg-white !text-black'} transition-colors duration-200`}
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Bereich</label>
+                  <RadioGroup defaultValue="vermietung" name="bereich" className="flex flex-col space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="vermietung" id="vermietung" />
+                      <Label htmlFor="vermietung">Vermietung</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="unternehmen" id="unternehmen" />
+                      <Label htmlFor="unternehmen">Unternehmen</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="social-media" id="social-media" />
+                      <Label htmlFor="social-media">Social Media</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="sonstiges" id="sonstiges" />
+                      <Label htmlFor="sonstiges">Sonstiges</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">Nachricht</label>
